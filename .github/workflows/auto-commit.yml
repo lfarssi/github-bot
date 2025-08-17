@@ -20,7 +20,7 @@ jobs:
       - name: Commit and push
         run: |
           git config user.name "lfarssi"
-          git config user.email "medlfarssi10@@gmail.com"
+          git config user.email "medlfarssi10@gmail.com"
           git add .
           git commit -m "Auto commit at $(date)" || echo "Nothing to commit"
           git push

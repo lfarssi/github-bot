@@ -1,26 +1,41 @@
-# .github/workflows/auto-commit.yml
-name: Auto Commit Every Hour
+ name: Auto Commit Daily Random
 
-on:
-  schedule:
-    - cron: '0 * * * *'  # Every hour (UTC time)
+ on:
+   schedule:
+     - cron: '0 23 * * *'  # Runs daily at 23:00 UTC (midnight Morocco time)
+   workflow_dispatch:
 
-jobs:
-  auto-commit:
-    runs-on: ubuntu-latest
+ jobs:
+   auto-commit:
+     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+     steps:
+       - name: Checkout code
+         uses: actions/checkout@v4  # Latest version for better compatibility
 
-      - name: Make random change
-        run: |
-          echo "Commit made at $(date)" >> hourly_log.txt
+       - name: Set up Git
+         run: |
+           git config --global user.name "fahdaguenouz"
+           git config --global user.email "faguenouz@gmail.com"
 
-      - name: Commit and push
-        run: |
-          git config user.name "lfarssi"
-          git config user.email "medlfarssi10@gmail.com"
-          git add .
-          git commit -m "Auto commit at $(date)" || echo "Nothing to commit"
-          git push
+       - name: Make random commits
+         run: |
+           COMMITS=$(( ( RANDOM % 21 ) + 20 ))  # Random number between 20 and 40
+           echo "Will make $COMMITS commits today."
+
+           for i in $(seq 1 $COMMITS); do
+             echo "Commit $i made at $(date -u)" >> daily_log.txt
+             git add daily_log.txt
+             if git commit -m "Random commit $i at $(date -u)"; then
+               echo "Commit $i successful"
+             else
+               echo "Error: Commit $i failed"
+               exit 1  # Exit on failure to ensure the error is caught
+             fi
+           done
+
+       - name: Push changes
+         uses: ad-m/github-push-action@v0.8.0  # Latest version
+         with:
+           github_token: ${{ secrets.GITHUB_TOKEN }}
+           branch: ${{ github.ref_name }}

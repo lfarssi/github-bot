@@ -15,8 +15,8 @@
 
        - name: Set up Git
          run: |
-           git config --global user.name "fahdaguenouz"
-           git config --global user.email "faguenouz@gmail.com"
+           git config --global user.name "lfarssi"
+           git config --global user.email "medlfarssi10@gmail.com"
 
        - name: Make random commits
          run: |
